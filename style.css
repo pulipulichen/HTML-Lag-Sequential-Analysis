@@ -1,0 +1,236 @@
+/**
+ * http://semantic-ui.com/collections/form.html
+ */
+body {
+  padding: 1em !important; 
+}
+.file-process-framework .loading.hide {
+  display:none;
+}
+
+.file-process-framework label,
+.file-process-framework .download-file {
+  display: block;
+}
+
+.file-process-framework .input-mode label {
+  display: inline;
+}
+
+/*
+.file-process-framework .download-file {
+  font-size: 2em;
+  width: 90%;
+}
+*/
+
+.file-process-framework textarea.preview {
+  display: block;
+  width: 90%;
+  /* height: calc(100vh - 200px); */
+  height: 1em !important;
+}
+
+
+.file-process-framework #preview_html {
+  /*max-height: calc(100vh - 141px); 
+  overflow-y: auto;*/
+}
+
+.input-field-container {
+  max-height: calc(100vh - 120px); 
+  overflow-y: auto;
+}
+
+
+table {
+    border-collapse: initial !important;
+    border-spacing: 3px !important;
+}
+
+table td {
+      vertical-align: top;
+}
+
+.hide, #preview.hide {
+    display: none !important;
+}
+
+.analyze-result {
+    margin-left: auto;
+    margin-right: auto;
+    /*text-align: center;*/
+}
+
+.analyze-result {
+    margin-bottom: 1em;
+}
+
+.analyze-result table {
+    border: 2px solid black;
+    border-collapse: collapse !important;
+    border-spacing: 0;
+}
+.analyze-result table thead th {
+    border-bottom-width: 2px; 
+}
+.analyze-result .right-border-bold {
+    border-right-width: 2px;
+}
+
+.analyze-result .right-border-none {
+    border-right-width: 0 !important;
+}
+.analyze-result .left-border-none {
+    border-left-width: 0 !important;
+}
+.analyze-result .bottom-border-thin,
+.analyze-result tr.bottom-border-thin td,
+.analyze-result tr.bottom-border-thin th {
+    border-bottom-width: 1px;
+}
+
+.analyze-result .top-border-thin,
+.analyze-result tr.top-border-thin td,
+.analyze-result tr.top-border-thin th {
+    border-top-width: 1px;
+}
+
+.analyze-result .bottom-border-medium,
+.analyze-result tr.bottom-border-medium td,
+.analyze-result tr.bottom-border-medium th {
+    border-bottom-width: 2px;
+}
+
+.analyze-result .top-border-medium,
+.analyze-result tr.top-border-medium td,
+.analyze-result tr.top-border-medium th {
+    border-top-width: 2px;
+}
+
+.analyze-result .right-border-medium,
+.analyze-result tr.right-border-medium td,
+.analyze-result tr.right-border-medium th {
+    border-right-width: 2px;
+}
+
+.analyze-result tbody tr.row:last-of-type th,
+.analyze-result tbody tr.row:last-of-type td {
+    border-bottom-width: 0;
+}
+
+.analyze-result thead tr:first-of-type th,
+.analyze-result thead tr:first-of-type td {
+    border-top-width: 0;
+}
+
+.analyze-result .top-border-thin {
+    border-top-width: 1px;
+}
+
+.analyze-result .row.n > td {
+    border-bottom-width: 1px;
+}
+
+.analyze-result th, 
+.analyze-result td {
+    word-break: keep-all;
+    font-weight: normal;
+}
+
+.analyze-result .caption {
+    text-align: center;
+}
+.analyze-result .note {
+    text-align: left;
+    display: block;
+}
+
+.analyze-result td {
+    text-align: right;
+}
+
+.analyze-result .row > th:last-of-type {
+    border-right-width: 2px !important;
+}
+
+.analyze-result table caption {
+    font-weight: bold;
+    margin-bottom: 0.5rem;
+}
+
+.analyze-result table tbody tr th {
+    border-right-width: 2px;
+}
+
+.analyze-result table td, 
+.analyze-result table th {
+    border: 1px solid black;
+    padding: 2px 5px;
+}
+
+.analyze-result div {
+    display: inline-block;
+}
+
+.analyze-result .row td {
+    text-align: right;
+}
+
+.analyze-result .row th {
+    text-align: left;
+    vertical-align: top;
+}
+
+.sortable > *,
+.sortable label {
+    cursor: move !important;
+}
+
+.analyze-result tbody tr td,
+.analyze-result tbody tr th,
+.analyze-result tfoot tr td,
+.analyze-result tfoot tr th {
+    border-top: 0px solid black;
+    border-bottom: 0px solid black;
+}
+
+#variables_container .field label img {
+    height: 1em;
+    /*float:left;*/
+}
+
+#contingency_table .contingency-table-col-plus {
+    text-align: right;
+}
+
+#contingency_table .variable_y_th {
+    vertical-align: top;
+    padding-top: 0.8em;
+}
+
+#contingency_table .variable_th input {
+    width: calc(100% - 3em);
+}
+
+.cross-table td.sig {
+    background-color: yellow;
+}
+
+#preview_html {
+    /*max-height: 300px !important;*/
+    max-height: inherit !important;
+}
+
+.skip {
+    /*color: red;*/
+}
+
+
+.contingency-table-row-plus {
+    text-align: center;
+}
+
+#preview_html button.speak {
+    display: block;
+}

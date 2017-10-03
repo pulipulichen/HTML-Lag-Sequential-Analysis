@@ -1,0 +1,94 @@
+#canvas.demo {
+    /* for IE10+ touch devices */
+    touch-action:none;
+}
+
+#js_plumb_canvas {
+    border: 1px solid gray;
+    position: relative;
+    height: 400px;
+    overflow: auto;
+}
+
+#js_plumb_canvas .w {
+    padding: 16px;
+    position: absolute;
+    z-index: 999;
+    border: 1px solid #2e6f9a;
+    box-shadow: 2px 2px 19px #e0e0e0;
+    -o-box-shadow: 2px 2px 19px #e0e0e0;
+    -webkit-box-shadow: 2px 2px 19px #e0e0e0;
+    -moz-box-shadow: 2px 2px 19px #e0e0e0;
+    -moz-border-radius: 8px;
+    border-radius: 8px;
+    opacity: 0.8;
+    cursor: move;
+    user-select: none;
+    background-color: white;
+    font-size: 11px;
+    -webkit-transition: background-color 0.25s ease-in;
+    -moz-transition: background-color 0.25s ease-in;
+    transition: background-color 0.25s ease-in;
+    /*box-sizing: border-box;*/
+    display: inline-block;
+}
+
+#js_plumb_canvas .w:hover {
+    background-color: #5c96bc;
+    color: white;
+
+}
+
+#js_plumb_canvas .aLabel {
+    -webkit-transition: background-color 0.25s ease-in;
+    -moz-transition: background-color 0.25s ease-in;
+    transition: background-color 0.25s ease-in;
+}
+
+#js_plumb_canvas .aLabel.jtk-hover, 
+#js_plumb_canvas .jtk-source-hover, 
+#js_plumb_canvas .jtk-target-hover {
+    background-color: #1e8151;
+    color: white;
+}
+
+#js_plumb_canvas .jtk-overlay {
+    background-color: white;
+    padding: 3px;
+    cursor: pointer;
+    user-select: none;
+    border-radius: 2px;
+}
+
+#js_plumb_canvas .jtk-overlay.jtk-hover {
+    z-index: 999;
+    /*font-size: 14px !important;*/
+    color: #1e8151 !important;
+}
+
+#js_plumb_canvas .aLabel {
+    background-color: white;
+    opacity: 0.8;
+    padding: 0.3em;
+    border-radius: 0.5em;
+    border: 1px solid #346789;
+    cursor: pointer;
+}
+
+#canvas.statemachine-demo .jtk-endpoint {
+    z-index: 3;
+}
+
+#js_plumb_canvas .dragHover {
+    border: 2px solid orange;
+}
+
+#js_plumb_canvas path, 
+#js_plumb_canvas .jtk-endpoint { cursor:pointer; }
+
+#js_plumb_canvas .jtk-overlay.aLabel {display: none;}
+
+#js_plumb_canvas .margin-test {
+    position: absolute;
+    left: -1000px;
+}
