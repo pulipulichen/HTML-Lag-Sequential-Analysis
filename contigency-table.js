@@ -601,6 +601,9 @@ var _draw_event_count_table = function () {
     for (var _i = 0; _i < _event_list.length; _i++) {
         var _event_name = _event_list[_i];
         var _count = _events_stat[_event_name];
+        if (_count === undefined) {
+          _count = 0
+        }
         var _per = precision_string((_count/_events_count)*100, 1) + "%";
         _data.push({
             n: _event_name,
