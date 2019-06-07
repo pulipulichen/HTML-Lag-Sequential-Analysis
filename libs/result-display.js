@@ -3,9 +3,10 @@ var _x_var_count;
 var _y_var_count;
 
 var _draw_result_table = function () {
+    return
+  
     _ct_json = _get_ct_json_from_ui();
     //console.log(_ct_json);
-    
     
     _reset_result();
     
