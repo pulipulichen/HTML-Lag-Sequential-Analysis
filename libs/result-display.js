@@ -532,7 +532,7 @@ var _draw_cell_percent_cell = function (_cross_table) {
                 */
             }
             
-            var _q = LagSequentialAnalysis.calcYuleQ(_ct_json, _y_var_name, _x_var_name);
+            var _q = LagSequentialAnalysisCalculator.calcYuleQ(_ct_json, _y_var_name, _x_var_name);
             _tbody.find('tr.yule-q-tr[y_var="' + _y_var_name + '"] td[x_var="' + _x_var_name + '"]').html(precision_string(_q, 3));
         }
     }

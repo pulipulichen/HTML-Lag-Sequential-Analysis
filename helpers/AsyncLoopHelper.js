@@ -23,10 +23,11 @@ let AsyncLoopHelper = {
     }
     else {
       let item = ary.shift()
-      process(item)
-      setTimeout(() => {
-        this.loop(ary, delaySec, process, callback)
-      }, delaySec * 1000)
+      process(item, () => {
+        setTimeout(() => {
+          this.loop(ary, delaySec, process, callback)
+        }, delaySec * 1000)
+      })
     }
   }
 }

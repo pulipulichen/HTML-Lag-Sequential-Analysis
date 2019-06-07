@@ -1,7 +1,7 @@
-let LagSequentialAnalysis = {
+let LagSequentialAnalysisCalculator = {
   calcYuleQ: function (_ct_json, _y_var_name, _x_var_name) {
     //    X ~X 
-    // Y  a  b
+    // Y  a  bCalculater
     // ~Y c  d
     
     var _a = 0;
@@ -33,4 +33,4 @@ let LagSequentialAnalysis = {
   }
 }
 
-window.LagSequentialAnalysis = LagSequentialAnalysis
+window.LagSequentialAnalysisCalculator = LagSequentialAnalysisCalculator
