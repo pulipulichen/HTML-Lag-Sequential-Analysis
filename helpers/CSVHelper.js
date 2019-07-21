@@ -1,41 +1,46 @@
 let CSVHelper = {
-  arrayToCSVString: function (headings, ary) {
+  arrayToCSVString: function (headings, ary, callback) {
     if (ary === undefined && Array.isArray(headings)) {
       ary = headings
       headings = []
-      for (let i = 0; i < ary[0].length; i++) {
+      let i = 0
+      AsyncLoopHelper.loop(ary[0], 0, (item, next) => {
         headings.push(`field_` + (i+1))
-      }
+        i++
+        next()
+      }, () => {
+        this.arrayToCSVString(headings, ary, callback)
+      })
+      return
     }
     
     let output = []
     
     output.push(headings.join(','))
     
-    ary.forEach(item => {
-      if (Array.isArray(item)) {
-        item = item.map(field => {
-          if (typeof(field) !== 'string') {
-            return field
-          }
-          
-          if (field.indexOf('"') > -1) {
-            field = field.split('"').join('\\"')
-            field = `"${field}"`
-          }
-          else if (field.indexOf("'") > -1) {
-            field = `"${field}"`
-          }
+    AsyncLoopHelper.loop(ary, 0, (rowItems, rowNext) => {
+      let line = []
+      AsyncLoopHelper.loop(rowItems, 0, (field, colNext) => {
+        if (typeof(field) !== 'string') {
           return field
-        })
-        output.push(item.join(','))
-      }
-      else {
-        output.push(item)
-      }
+        }
+
+        if (field.indexOf('"') > -1) {
+          field = field.split('"').join('\\"')
+          field = `"${field}"`
+        }
+        else if (field.indexOf("'") > -1) {
+          field = `"${field}"`
+        }
+        line.push(field)
+        colNext()
+      }, () => {
+        output.push(line.join(','))
+        rowNext()
+      })
+    }, () => {
+      callback(output.join('\n'))
     })
-    
-    return output.join('\n')
   },
   arrayToCSVTableHTML: function (headings, ary) {
     if (ary === undefined && Array.isArray(headings)) {
