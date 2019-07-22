@@ -8,6 +8,7 @@ var _combine_input = function () {
     //_download_bayes_net_xml_file();
     
     var _csv = $("#input_data").val();
+    //console.log(_csv)
     _load_csv_to_ct_json(_csv);
 };	// var _combine_input = function () {
 
@@ -22,7 +23,7 @@ var _get_fix_precision = function (_number) {
 };
 
 // -----------------------------------------------------
-
+/*
 if (typeof(tinyMCE) === "object") {
 tinyMCE.init({
 	mode : "specific_textareas",
@@ -44,7 +45,7 @@ tinyMCE.init({
     }
 });
 }
-
+*/
 
 
 var _reset_result = function () {
