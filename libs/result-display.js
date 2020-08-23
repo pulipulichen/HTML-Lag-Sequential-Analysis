@@ -1,4 +1,6 @@
 
+/* global LagSequentialAnalysisCalculator */
+
 var _x_var_count;
 var _y_var_count;
 
@@ -510,29 +512,41 @@ var _draw_cell_percent_cell = function (_cross_table) {
             //console.log([_residual, _exp, _x_per_list[_x_var_name], _y_per_list[_y_var_name]]);
             _tbody.find('tr.adj-residual-tr[y_var="' + _y_var_name + '"] td[x_var="' + _x_var_name + '"]').html(precision_string(_adj_residual, 3));
             
-            if (_adj_residual >= 1.96) {
-                _tbody.find('tr[y_var="' + _y_var_name + '"] td[x_var="' + _x_var_name + '"]').addClass("sig");
-                
-                /*
-                console.log({
-                        "error": "sig",
-                        x: _x_var_name,
-                        y: _y_var_name,
-                        z1: _z1,
-                        z2: _z2,
-                        z3: _z3,
-                        z4: _z4,
-                        x_per: _x_per_list[_x_var_name],
-                        x_sum: _x_sum_list[_x_var_name],
-                        y_sum: _y_sum_list[_y_var_name],
-                        total: _total_sum,
-                        same: _is_count_same_adjacent_event(),
-                    });
-                */
-            }
-            
             var _q = LagSequentialAnalysisCalculator.calcYuleQ(_ct_json, _y_var_name, _x_var_name);
             _tbody.find('tr.yule-q-tr[y_var="' + _y_var_name + '"] td[x_var="' + _x_var_name + '"]').html(precision_string(_q, 3));
+            _tbody.find('tr.adj-residual-tr[y_var="' + _y_var_name + '"] td[x_var="' + _x_var_name + '"]').attr('yule_q', _q)
+            
+            let useYuleQConnect = $('#connection_with_yule_q').prop('checked')
+            let useYuleQConnectMin = Number($('#connection_with_yule_q_min').val())
+            
+            if (useYuleQConnect === false) {
+              if (_adj_residual >= 1.96) {
+                  _tbody.find('tr[y_var="' + _y_var_name + '"] td[x_var="' + _x_var_name + '"]').addClass("sig");
+
+                  /*
+                  console.log({
+                          "error": "sig",
+                          x: _x_var_name,
+                          y: _y_var_name,
+                          z1: _z1,
+                          z2: _z2,
+                          z3: _z3,
+                          z4: _z4,
+                          x_per: _x_per_list[_x_var_name],
+                          x_sum: _x_sum_list[_x_var_name],
+                          y_sum: _y_sum_list[_y_var_name],
+                          total: _total_sum,
+                          same: _is_count_same_adjacent_event(),
+                      });
+                  */
+              }
+            }
+            else {
+              if (_q >= useYuleQConnectMin) {
+                _tbody.find('tr[y_var="' + _y_var_name + '"] td[x_var="' + _x_var_name + '"]').addClass("sig");
+              }
+            }
+            
         }
     }
 };
@@ -622,14 +636,16 @@ var _get_sig_seq = function () {
     var _sig_seq = [];
     $("#preview_html .cross-table .adj-residual-tr td.sig").each(function (_i, _td) {
         _td = $(_td);
-        var _z = eval(_td.text().trim());
+        var _z = Number(_td.text().trim())
         var _g = _td.parent().attr("y_var");
         var _t = _td.attr("x_var");
+        var _q = Number(_td.attr("yule_q"))
         
         _sig_seq.push({
             g: _g,
             t: _t,
-            z: _z
+            z: _z,
+            q: _q
         });
     });
     
@@ -752,32 +768,70 @@ var _draw_diagram = function (_result, _sig_seq) {
         }
     }
     
-    var _ratio = 4 / (_max_z - _min_z);
+    var _ratio = 1
+    if (_max_z > _min_z) {
+      _ratio = 4 / (_max_z - _min_z)
+    }
     
+    let useYuleQConnect = $('#connection_with_yule_q').prop('checked')
+    let useYuleQConnectMin = Number($('#connection_with_yule_q_min').val())
+    //console.log(useYuleQConnect, useYuleQConnectMin)
     
     var _seq_list = [];
     for (var _i = 0; _i < _sig_seq.length; _i++) {
         var _s = _sig_seq[_i];
         
-        var _width = (_s.z - _min_z) * _ratio;
-        _width = _width + 1;
-        
-        var _color = "#526173";
-        if (_s.z > 1.96 
-                && $("#input_display_full_transfer_diagram:checked").length === 1) {
-            _color = "red";
+        if (useYuleQConnect === false) {
+          var _width = (_s.z - _min_z) * _ratio;
+          //console.log(_s.z, _min_z, _ratio)
+          _width = _width + 1;
+
+          var _color = "#526173";
+          if (_s.z > 1.96 
+                  && $("#input_display_full_transfer_diagram:checked").length === 1) {
+              _color = "red";
+          }
+          //console.log([_s.z, _width]);
+          _seq_list.push({
+              "from": _s.g,
+              "to": _s.t,
+              "label": _s.z,
+              "paintStyle": {
+                  strokeWidth: _width, 
+                  stroke: _color
+              }
+          });
         }
-        //console.log([_s.z, _width]);
-        _seq_list.push({
-            "from": _s.g,
-            "to": _s.t,
-            "label": _s.z,
-            "paintStyle": {
-                strokeWidth: _width, 
-                stroke: _color
-            }
-        });
+        else {
+          var _width = _s.q / useYuleQConnectMin
+          let label = _s.q
+          label = Math.round(label * 10) / 10
+          
+          if (_s.z > 2.58) {
+            label = label + '**'
+            _color = "red"
+          }
+          else if (_s.z > 1.96) {
+            label = label + '*'
+            _color = "red"
+          }
+
+          var _color = "#526173";
+          
+          //console.log([_s.z, _width]);
+          _seq_list.push({
+              "from": _s.g,
+              "to": _s.t,
+              "label": label,
+              "paintStyle": {
+                  strokeWidth: _width, 
+                  stroke: _color
+              }
+          });
+        }
     }
+    
+    //console.log(_seq_list)
     
     /*
     _seq_list.push({
@@ -796,6 +850,6 @@ var _draw_diagram = function (_result, _sig_seq) {
             "label": "1234",
         });
     */
-    console.log(_seq_list);
+    //console.log(_seq_list);
     _init_state_machine("js_plumb_canvas", _seq_list);
 }; 

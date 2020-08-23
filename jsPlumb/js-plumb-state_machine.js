@@ -263,7 +263,7 @@ var _init_state_machine = function (_canvas_id, _seq_list) {
                 instance.connect(_json);
             }
         });
-
+            
         //jsPlumb.fire("jsPlumbDemoLoaded", instance);
 
     }); // jsPlumb.ready(function () {
