@@ -1,3 +1,5 @@
+/* global AsyncLoopHelper */
+
 let LagSequentialAnalysisPreprocessor = {
   parseCSVArray: function (csvString, callback) {
     if (typeof(csvString) !== 'string') {
@@ -7,7 +9,12 @@ let LagSequentialAnalysisPreprocessor = {
     let lines = csvString.trim().split('\n')
     let csvArray = []
     AsyncLoopHelper.loop(lines, 0, (line, next) => {
-      line = line.trim().split(',').map(field => {
+      let sep = ','
+      if (line.indexOf(sep) === -1) {
+        sep = '\t'
+      }
+      
+      line = line.trim().split(sep).map(field => {
         if (field.startsWith('"') && field.endsWith('"')) {
           return field.split(1, -1).trim()
         }

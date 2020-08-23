@@ -8,7 +8,9 @@ var _combine_input = function () {
     //_download_bayes_net_xml_file();
     
     var _csv = $("#input_data").val();
-    //console.log(_csv)
+    if (_csv.indexOf('\t') > -1) {
+      _csv = _csv.split('\t').join(',')
+    }
     _load_csv_to_ct_json(_csv);
 };	// var _combine_input = function () {
 
