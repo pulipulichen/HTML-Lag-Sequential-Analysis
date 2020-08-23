@@ -30,6 +30,10 @@ var _draw_result_table = function () {
     
     var _cross_table = _draw_cross_table();
     _cross_table.appendTo(_result);
+    
+    var _plainTable = drawPlainLagTable(_cross_table)
+    _plainTable.appendTo(_result);
+    
     var _note = _draw_cross_table_note();
     _note.appendTo(_result);
     
@@ -229,6 +233,7 @@ var _draw_cross_table = function () {
             var _td = $('<td align="right"></td>');
             if (_j < _x_vars_count) {
                 _td.attr('x_var', _x_vars_list[_j]);
+                _td.attr('title', _name + ' -> ' + _x_vars_list[_j]);
             }
             else {
                 _td.addClass('y-sum');
@@ -517,6 +522,7 @@ var _draw_cell_percent_cell = function (_cross_table) {
             _tbody.find('tr.adj-residual-tr[y_var="' + _y_var_name + '"] td[x_var="' + _x_var_name + '"]').attr('yule_q', _q)
             
             let useYuleQConnect = $('#connection_with_yule_q').prop('checked')
+            let useYuleQsigZConnect = $('#connection_with_yule_q_sig_z').prop('checked')
             let useYuleQConnectMin = Number($('#connection_with_yule_q_min').val())
             
             if (useYuleQConnect === false) {
@@ -542,7 +548,12 @@ var _draw_cell_percent_cell = function (_cross_table) {
               }
             }
             else {
-              if (_q >= useYuleQConnectMin) {
+              if (useYuleQsigZConnect === true) {
+                if (_q >= useYuleQConnectMin && _adj_residual >= 1.96) {
+                  _tbody.find('tr[y_var="' + _y_var_name + '"] td[x_var="' + _x_var_name + '"]').addClass("sig");
+                }
+              }
+              else if (_q >= useYuleQConnectMin) {
                 _tbody.find('tr[y_var="' + _y_var_name + '"] td[x_var="' + _x_var_name + '"]').addClass("sig");
               }
             }
@@ -852,4 +863,6 @@ var _draw_diagram = function (_result, _sig_seq) {
     */
     //console.log(_seq_list);
     _init_state_machine("js_plumb_canvas", _seq_list);
+    
+    //drawPlainLagTable()
 }; 

@@ -109,6 +109,7 @@ var _init_state_machine = function (_canvas_id, _seq_list) {
         
         var _height = (_w.eq(0).height() + (_margin*1.3))  * (_node_width-1);
         _height = _height + (_margin*1);
+        _height = _height * 3
         //console.log(_w.eq(0).height());
         $(canvas).css("height", _height + "px");
 

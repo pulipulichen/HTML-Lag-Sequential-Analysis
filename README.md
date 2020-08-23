@@ -8,3 +8,6 @@ https://pulipulichen.github.io/HTML-Lag-Sequential-Analysis/
 
 GitHub:
 https://github.com/pulipulichen/HTML-Lag-Sequential-Analysis
+
+ICON:
+https://findicons.com/icon/62806/agt_reload

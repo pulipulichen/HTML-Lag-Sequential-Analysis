@@ -43,7 +43,7 @@ var _load_csv_to_ct_json = function (_csv) {
     _events_list = [];
     for (var _l = 1; _l < _lines.length; _l++) {
         var _fields = _lines[_l].trim().split(sep);
-        console.log(_fields)
+        //console.log(_fields)
         var _user = _fields[0].trim();
         var _seq_id = eval(_fields[1].trim());
         var _events = _fields[2].trim().split(";");
