@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Draw.IO test</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script src="vendors/jquery.min.js"></script>
+  </head>
+  <body>
+    <textarea id="output" onfocus="this.select()"
+              style="width: 90vw;height: 90vh"></textarea>
+    
+    <script>
+      let edges = [
+        {source: "Aa", target: "Cc", label: '0.9*', width: 1},
+        {source: "Bb", target: "Dd", label: '0.3', width: 2}
+      ]
+      let parseNodesFromEdges = (edges) => {
+        let nodes = []
+        edges.forEach(({source, target}) => {
+          if (nodes.indexOf(source) === -1) {
+            nodes.push(source)
+          }
+          if (nodes.indexOf(target) === -1) {
+            nodes.push(target)
+          }
+        })
+        //nodes.sort()
+        return nodes
+      }
+      let nodes = parseNodesFromEdges(edges)
+      
+      
+      // -------------------------
+      let buildDiagramXML = function (nodes, edges) {
+        let nodeWidth = 120
+        let nodeHeight = 40
+
+        let nodeSize = nodeWidth
+        if (nodeSize < nodeHeight) {
+          nodeSize = nodeHeight
+        }
+
+        let diameter = nodeSize * 2 * Math.sqrt(nodes.length)
+        let pageSize = diameter + nodeSize
+        let centerSize = Math.round(pageSize / 2)
+        let nodePos = buildNodePositions(nodes)
+        //console.log(nodePos)
+
+        // -------------------------
+
+        let xml = $(`<mxfile host="app.diagrams.net" modified="2020-08-27T09:19:55.502Z" agent="5.0 (Windows NT 6.1; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/84.0.4147.135 Safari/537.36" etag="enQdLDDL4RRfg4W3JObJ" version="13.6.5" type="device">
+    <diagram id="C5RBs43oDa-KdzZeNtuy" name="Page-1">
+      <mxGraphModel dx="${Math.round(pageSize/2)}" dy="${Math.round(pageSize/2)}" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="${pageSize}" pageHeight="${pageSize}" math="0" shadow="0">
+        <root>
+          <mxCell id="WIyWlLk6GJQsqaUBKTNV-0"></mxCell>
+          <mxCell id="WIyWlLk6GJQsqaUBKTNV-1" parent="WIyWlLk6GJQsqaUBKTNV-0"></mxCell>
+        </root>
+      </mxGraphModel>
+    </diagram>
+  </mxfile>`)
+
+
+        let root = xml.find('root')
+        
+        // -------------
+        
+        nodes.forEach((node, i) => {
+          let pos = nodePos[node]
+          
+          let x = Math.round(pos.x * Math.round(diameter / 2) + centerSize)
+          let y = Math.round(pos.y * Math.round(diameter / 2) + centerSize)
+          
+          root.append(`<mxCell id="WIyWlLk6GJQsqaUBKTNV-cell${i}" 
+              value="${node}" style="rounded=1;whiteSpace=wrap;html=1;fontSize=12;glass=0;strokeWidth=1;shadow=1;" parent="WIyWlLk6GJQsqaUBKTNV-1" vertex="1">
+          <mxGeometry x="${x}" y="${y}" width="${nodeWidth}" height="${nodeHeight}" as="geometry" />
+        </mxCell>`)
+        })
+        
+        // -------------
+        
+        edges.forEach(({source, target, label, width}, i) => {
+          let sourceID = `WIyWlLk6GJQsqaUBKTNV-cell${nodes.indexOf(source)}`
+          let targetID = `WIyWlLk6GJQsqaUBKTNV-cell${nodes.indexOf(target)}`
+          
+          if (isNaN(width)) {
+            width = 1
+          }
+          
+          root.append(`<mxCell id="A-Yyusrlcqo05p7WiQaU-line${i}" value="${label}" 
+    style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeWidth=${width};jumpStyle=arc;jumpSize=12;" 
+    parent="WIyWlLk6GJQsqaUBKTNV-1" 
+    source="${sourceID}" 
+    target="${targetID}" edge="1">
+          <mxGeometry relative="1" as="geometry"></mxGeometry>
+        </mxCell>`)
+        })
+        
+        // -------------
+        
+        let text = `<?xml version="1.0" encoding="UTF-8"?>`
+              + xml.prop('outerHTML')
+        
+        let remapping = {
+          'mxgraphmodel': 'mxGraphModel',
+          'mxcell': 'mxCell',
+          'mxgeometry': 'mxGeometry'
+        }
+        Object.keys(remapping).forEach(s => {
+          text = text.split(s).join(remapping[s])
+        })
+              
+        return text
+      }
+      
+      let buildNodePositions = function (nodes) {
+        let output = {}
+        nodes.forEach((node, i) => {
+          output[node] = {
+            x: Math.sin(Math.PI * 2 * i / nodes.length),
+            y: Math.cos(Math.PI * 2 * i / nodes.length) * -1,
+          }
+        })
+        return output
+      }
+      
+      
+  
+      
+      // -------------------------
+      
+      document.getElementById('output').value = buildDiagramXML(nodes, edges)
+    </script>
+  </body>
+</html>

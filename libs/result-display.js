@@ -863,6 +863,50 @@ var _draw_diagram = function (_result, _sig_seq) {
     */
     //console.log(_seq_list);
     _init_state_machine("js_plumb_canvas", _seq_list);
-    
-    //drawPlainLagTable()
+    appendDiagramFlow(_seq_list)
 }; 
+
+let appendDiagramFlow = function (_seq_list) {
+  
+    let edges = seqListToEdges(_seq_list)
+    //console.log(edges)
+    let nodes = parseNodesFromEdges(edges)
+    let xml = buildDiagramXML(nodes, edges)
+    let diagramButtons = $(`<div class="ui fluid buttons">
+    <a class="ui button copy-button">Copy</a>
+    <a class="ui button download-button">Download</a>
+    <a class="ui button" href="https://app.diagrams.net/" target="_blank">diagrams.net</a>
+</div>`)
+  
+    diagramButtons.find('.download-button').click(() => {
+      let nodeString = ''
+      for (let i = 0; i < nodes.length; i++) {
+        if (nodeString !== '') {
+          nodeString = nodeString + ','
+        }
+        
+        let n = nodes[i].slice(0,3)
+        
+        nodeString = nodeString + n
+        if (nodeString.length > 10) {
+          break
+        }
+      }
+      
+      let filename = `LSA-${nodeString}-${(new Date().mmddhhmm())}.xml`
+      _download_file(xml, filename, "text/xml");
+    })
+    
+    diagramButtons.find('.copy-button').click(() => {
+      const el = document.createElement('textarea');
+      el.value = xml
+      document.body.appendChild(el);
+      el.select();
+      document.execCommand('copy');
+      document.body.removeChild(el);
+    })
+    
+    $('#preview_html').append(`<textarea onfocus="this.select()">` + xml + `</textarea>`)
+    $('#preview_html').append(diagramButtons)
+    //drawPlainLagTable()
+}

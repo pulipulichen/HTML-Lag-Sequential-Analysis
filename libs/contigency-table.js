@@ -114,7 +114,22 @@ var _load_csv_to_ct_json = function (_csv) {
     //console.log(_users_seq);
     
     //return console.log(_ct_json);
-    //console.log(_ct_json);
+    
+    let extraCodes = $('#extra_code').val().split(' ')
+    extraCodes.forEach(code => {
+      if (code.trim() === '') {
+        return false
+      }
+      if (_ct_json[code]) {
+        return false
+      }
+      
+      let count = {}
+      count[code] = 0
+      _ct_json[code] = count
+    })
+    //_ct_json['zzz'] = {'zzz': 0}
+    //console.log(_ct_json)
     
     _draw_contingency_table_from_ct_json();
 };

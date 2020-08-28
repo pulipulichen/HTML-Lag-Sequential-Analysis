@@ -1,5 +1,23 @@
 
+/* global jsPlumb */
+
+/**
+ * https://stackoverflow.com/a/52994590/6645399
+ * @type type
+ */
+jsPlumb.importDefaults({
+  ConnectionsDetachable: false
+});
+
 var _init_state_machine = function (_canvas_id, _seq_list) {
+  
+    let getRoundPosition = function (i, count) {
+      return {
+        x: Math.sin(Math.PI * 2 * i / count),
+        y: Math.cos(Math.PI * 2 * i / count) * -1,
+      }
+    }
+  
     jsPlumb.ready(function () {
 
         // setup some defaults for jsPlumb.
@@ -20,7 +38,8 @@ var _init_state_machine = function (_canvas_id, _seq_list) {
         });
 
         instance.registerConnectionType("basic", { 
-            anchor:"Continuous", connector:"StateMachine" 
+            anchor:"Continuous", 
+            connector:"StateMachine" 
         });
 
         window.jsp = instance;
@@ -33,11 +52,19 @@ var _init_state_machine = function (_canvas_id, _seq_list) {
         // ---------------------------------
         // 建立節點
         var _node_list = [];
+        let maxCharacterCount = 4
         for (var _i = 0; _i < _seq_list.length; _i++) {
             var _from = _seq_list[_i].from;
             var _from_id = $.inArray(_from, _node_list);
             var _to = _seq_list[_i].to;
             var _to_id = $.inArray(_to, _node_list);
+            
+            if (_from.length > maxCharacterCount) {
+              maxCharacterCount = _from.length
+            }
+            if (_to.length > maxCharacterCount) {
+              maxCharacterCount = _to.length
+            }
             
             if ($.inArray(_from, _node_list) === -1) {
                 _node_list.push(_from);
@@ -109,22 +136,39 @@ var _init_state_machine = function (_canvas_id, _seq_list) {
         
         var _height = (_w.eq(0).height() + (_margin*1.3))  * (_node_width-1);
         _height = _height + (_margin*1);
-        _height = _height * 3
+        
+        _height = _height * 3 // 多點空間挪動
         //console.log(_w.eq(0).height());
         $(canvas).css("height", _height + "px");
+        
+        //console.log(_w.length)
+
+        let nodeSize = 20 + maxCharacterCount * 10
+        let diameter = nodeSize * 2 * Math.sqrt(_w.length)
+        let pageSize = diameter + nodeSize
+        let centerSize = Math.round(pageSize / 2)
 
         _w.each(function (_i, _div) {
             _div = $(_div);
 
             // 取得x的位置 0,1,2
-            var _x = _i % _node_width;
-            var _y = (_i-_x) / _node_width; // 
+            //var _x = _i % _node_width;
+            //var _y = (_i-_x) / _node_width; // 
+            
+            let pos = getRoundPosition(_i, _w.length)
+            let _x = Math.round(pos.x * Math.round(diameter / 2) + centerSize)
+            let _y = Math.round(pos.y * Math.round(diameter / 2) + centerSize)
+            _div.css("top", _y + "px");
+            _div.css("left", _x + "px");
 
+            /*
             var _pos = {
                 "top": _margin,
                 "left": _left_base
             };
+            */
 
+            /*
             if (_i === 0) {
                 _div.css("top", _base + "px");
                 _div.css("left", _left_base + "px");
@@ -140,8 +184,9 @@ var _init_state_machine = function (_canvas_id, _seq_list) {
             if (_i > 0) {
                 var _top = (_margin*1.3) * (_y);
                 _div.css("top", (_base + _top) + "px");
-               _pos.top = _top;
+               //_pos.top = _top;
             }
+            */
 
             //console.log(_pos);
             instance.draggable(_div);
@@ -268,6 +313,7 @@ var _init_state_machine = function (_canvas_id, _seq_list) {
         //jsPlumb.fire("jsPlumbDemoLoaded", instance);
 
     }); // jsPlumb.ready(function () {
+    
 };
 /*
 var _seq_list = [

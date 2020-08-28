@@ -47,6 +47,7 @@ let drawPlainLagTable = function (crossTable) {
     <tr>
       <th>Lag 0</th>
       <th>Lag 1</th>
+      <th>Lag 0->1</th>
       <th>出現頻率 f(g,t)</th>
       <th>出現機率 p(g,t)</th>
       <th>期望個數 exp(g,t)</th>
@@ -74,6 +75,7 @@ let drawPlainLagTable = function (crossTable) {
     
     tr.append(`<td>${d['lag0']}</td>`)
     tr.append(`<td>${d['lag1']}</td>`)
+    tr.append(`<td>${d['lag0']}->${d['lag1']}</td>`)
     
     attrList.forEach(attr => {
       tr.append(`<td>${d[attr]}</td>`)

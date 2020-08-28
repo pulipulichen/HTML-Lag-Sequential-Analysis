@@ -23,7 +23,7 @@
 
 <script src="jsPlumb/jsplumb.min.js"></script>
 <script src="jsPlumb/js-plumb-state_machine.js"></script>
-<link rel="stylesheet" href="jsPlumb/js-plumb-state_machine.css" />
+<link rel="stylesheet" href="jsPlumb/js-plumb-state_machine.css"  />
 <script src='//code.responsivevoice.org/responsivevoice.js'></script>
 
 <script src="vendors/statistics-distributions.js"></script>
@@ -37,6 +37,9 @@
 <script src="libs/dynamic-classification.js"></script>
 <script src="libs/LagSequentialAnalysisCalculator.js"></script>
 <script src="libs/drawPlainLagTable.js"></script>
+<script src="vendors/date-helper.js"></script>
+
+<script src="libs/drawFlow.js"></script>
 <script src="script.js"></script>
 
 <!-- ------------------------------------------------------------ -->
@@ -237,6 +240,12 @@
 <h1 class="ui horizontal divider header">
   Setting
 </h1> 
+    <div class='inline field'>
+        <label>
+          額外編碼 (用空格區隔)
+        </label>
+        <input type="text" value="" class="change-trigger" id="extra_code" />
+      </div>
     <div class="field">
         <div class="ui checkbox">
             <input type="checkbox" class="change-trigger-draw" 
@@ -284,7 +293,7 @@
         <label>
           Yule'Q最小值:
         </label>
-        <input type="number" value="0.4" class="change-trigger-draw" id="connection_with_yule_q_min" />
+        <input type="number" value="0.6" class="change-trigger-draw" id="connection_with_yule_q_min" />
       </div>
       <div class="ui checkbox">
           <input type="checkbox" class="change-trigger-draw" 
