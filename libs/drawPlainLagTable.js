@@ -43,7 +43,7 @@ let drawPlainLagTable = function (crossTable) {
   let table = $(`<div class="analyze-result cross-table event-transfer-table">
 <div class="caption" style="text-align:center;display:block">
   事件轉移表
-  <button type="button" class="copy-table">複製</button>
+  <button type="button" class="copy-table ui button mini">複製</button>
 </div>
 <table border="1" cellpadding="0" cellspacing="0">
   <thead>

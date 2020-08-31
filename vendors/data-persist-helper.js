@@ -34,15 +34,24 @@ let initSettingFromPersisten = () => {
   
 }
 
+let setDataToPersistenTimer
 let setDataToPersisten = (data) => {
   if (typeof(data) !== 'string') {
     return false
   }
   
-  localStorage.setItem(DATA_PERSIST_DATA_KEY, data)
+  if (setDataToPersistenTimer) {
+    clearTimeout(setDataToPersistenTimer)
+  }
+  setDataToPersistenTimer = setTimeout(() => {
+    localStorage.setItem(DATA_PERSIST_DATA_KEY, data)
+  }, 3000)
+  
 }
 
+let setSettingToPersistenTimer
 let setSettingToPersisten = () => {
+  clearTimeout(setSettingToPersistenTimer)
   let setting = {}
   
   $('.data-persist-setting').each((i, ele) => {
@@ -65,5 +74,7 @@ let setSettingToPersisten = () => {
   
   setting = JSON.stringify(setting)
   
-  localStorage.setItem(DATA_PERSIST_SETTING_KEY, setting)
+  setSettingToPersistenTimer = setTimeout(() => {
+    localStorage.setItem(DATA_PERSIST_SETTING_KEY, setting)
+  }, 3000)
 }

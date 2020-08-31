@@ -96,8 +96,8 @@ var _draw_event_count_table = function () {
     var _cross_table = $('<div class="analyze-result cross-table events-descriptive-table" style="display:inline-block">'
         + `<div class="caption" style="text-align:center;display:block">
             事件統計表
-            <button type="button" class="copy-table-freq">複製頻率排序</button>
-            <button type="button" class="copy-table-code">複製編碼排序</button>
+            <button type="button" class="copy-table-freq ui button mini">複製頻率排序</button>
+            <button type="button" class="copy-table-code ui button mini">複製編碼排序</button>
           </div>`
         + '<table border="1" cellpadding="0" cellspacing="0">'
         + '<thead>'
