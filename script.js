@@ -1,17 +1,21 @@
 
 var _combine_input = function () {
-    // 開頭設定
-    _reset_result();
-    // ------------------------------------------
-    // 資料處理設定
-    //_download_dynamic_classification_file();
-    //_download_bayes_net_xml_file();
-    
-    var _csv = $("#input_data").val();
-    if (_csv.indexOf('\t') > -1) {
-      _csv = _csv.split('\t').join(',')
-    }
-    _load_csv_to_ct_json(_csv);
+  
+
+  // 開頭設定
+  _reset_result();
+  // ------------------------------------------
+  // 資料處理設定
+  //_download_dynamic_classification_file();
+  //_download_bayes_net_xml_file();
+
+  var _csv = $("#input_data").val();
+  if (_csv.indexOf('\t') > -1) {
+    _csv = _csv.split('\t').join(',')
+  }
+  setDataToPersisten(_csv)
+  
+  _load_csv_to_ct_json(_csv);
 };	// var _combine_input = function () {
 
 // ---------------------------------------
@@ -307,9 +311,6 @@ $(function () {
 
     //$('.menu .item').tab();
     
-    _load_data_from_filepath("#input_data", "data.csv", _combine_input);
-    
-
     $('#copy_source_code').click(function () {
         PULI_UTIL.clipboard.copy($("#preview").val());
     });
@@ -317,6 +318,11 @@ $(function () {
     $('#copy_source_code_html').click(function () {
         PULI_UTIL.clipboard.copy($("#preview_html_source").val());
     });
+    
+    initSettingFromPersisten()
+    if (initDataFromPersisten() === false) {
+      _load_data_from_filepath("#input_data", "data.csv", _combine_input)
+    }
     
     /*
     $( ".sortable" ).sortable({

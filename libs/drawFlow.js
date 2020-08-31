@@ -147,6 +147,40 @@ let buildNodePositions = function (nodes) {
 }
 
 
+let analyzeGroupEdges = function (edges) {
+  let groupList = {}
+  
+  let parseGroup = (node) => {
+    if (node.indexOf('-') === -1) {
+      return '_'
+    }
+    else {
+      return node.slice(0, node.indexOf('-'))
+    }
+  }
+  
+  let addToGroupList = (group, edge) => {
+    if (Array.isArray(groupList[group]) === false) {
+      groupList[group] = []
+    }
+    groupList[group].push(edge)
+  }
+  
+  edges.forEach(edge => {
+    let sourceGroup = parseGroup(edge.source)
+    let targetGroup = parseGroup(edge.target)
+    
+    if (sourceGroup === targetGroup) {
+      addToGroupList(sourceGroup, edge)
+    }
+    else {
+      addToGroupList(sourceGroup, edge)
+      addToGroupList(targetGroup, edge)
+    }
+  })
+  
+  return groupList
+}
 
 
 // -------------------------

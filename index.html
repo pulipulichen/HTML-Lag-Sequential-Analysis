@@ -37,7 +37,10 @@
 <script src="libs/dynamic-classification.js"></script>
 <script src="libs/LagSequentialAnalysisCalculator.js"></script>
 <script src="libs/drawPlainLagTable.js"></script>
+
 <script src="vendors/date-helper.js"></script>
+<script src="vendors/copy-helper.js"></script>
+<script src="vendors/data-persist-helper.js"></script>
 
 <script src="libs/drawFlow.js"></script>
 <script src="script.js"></script>
@@ -244,11 +247,11 @@
         <label>
           額外編碼 (用空格區隔)
         </label>
-        <input type="text" value="" class="change-trigger" id="extra_code" />
+        <input type="text" value="" class="change-trigger data-persist-setting" id="extra_code" />
       </div>
     <div class="field">
         <div class="ui checkbox">
-            <input type="checkbox" class="change-trigger-draw" 
+            <input type="checkbox" class="change-trigger-draw data-persist-setting" 
                    name="input_count_same_adjacent_event"
                    id="input_count_same_adjacent_event" 
                    value="input_count_same_adjacent_event" />
@@ -257,7 +260,7 @@
     </div>
     <div class="field">
         <div class="ui checkbox">
-            <input type="checkbox" class="change-trigger-draw" 
+            <input type="checkbox" class="change-trigger-draw data-persist-setting" 
                    name="input_table_display_details"
                    id="input_table_display_details" 
                    value="input_table_display_details" checked="checked"  />
@@ -266,7 +269,7 @@
     </div>
     <div class="field">
       <div class="ui checkbox">
-          <input type="checkbox" class="change-trigger-draw" 
+          <input type="checkbox" class="change-trigger-draw data-persist-setting" 
                  name="input_display_full_transfer_diagram"
                  id="input_display_full_transfer_diagram" 
                  value="input_display_full_transfer_diagram" />
@@ -275,7 +278,7 @@
     </div>
       <div class="inline field">
       <div class="ui checkbox">
-          <input type="checkbox" class="change-trigger-draw" 
+          <input type="checkbox" class="change-trigger-draw data-persist-setting" 
                  name="connection_with_yule_q"
                  id="connection_with_yule_q" 
                  checked="checked"
@@ -293,10 +296,10 @@
         <label>
           Yule'Q最小值:
         </label>
-        <input type="number" value="0.6" class="change-trigger-draw" id="connection_with_yule_q_min" />
+        <input type="number" value="0.6" class="change-trigger-draw data-persist-setting" id="connection_with_yule_q_min" />
       </div>
       <div class="ui checkbox">
-          <input type="checkbox" class="change-trigger-draw" 
+          <input type="checkbox" class="change-trigger-draw data-persist-setting" 
                  name="connection_with_yule_q_sig_z"
                  id="connection_with_yule_q_sig_z" 
                  checked="checked"
@@ -317,7 +320,7 @@
     -->
     <div class="field">
         <div class="ui checkbox">
-            <input type="checkbox" class="change-trigger-draw" 
+            <input type="checkbox" class="change-trigger-draw data-persist-setting" 
                    name="input_table_style_display"
                    id="input_table_style_display" 
                    value="input_table_style_display"  />

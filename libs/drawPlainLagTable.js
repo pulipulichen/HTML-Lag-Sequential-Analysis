@@ -41,7 +41,10 @@ let drawPlainLagTable = function (crossTable) {
   // --------------------------------
   
   let table = $(`<div class="analyze-result cross-table event-transfer-table">
-<div class="caption" style="text-align:center;display:block">事件轉移表</div>
+<div class="caption" style="text-align:center;display:block">
+  事件轉移表
+  <button type="button" class="copy-table">複製</button>
+</div>
 <table border="1" cellpadding="0" cellspacing="0">
   <thead>
     <tr>
@@ -59,6 +62,36 @@ let drawPlainLagTable = function (crossTable) {
   <tbody></tbody>
 </table>
 </div>`)
+  
+  table.find('.copy-table').click(() => {
+    let text = data.map(d => {
+      
+      let line = [
+        d['lag0'], 
+        d['lag1'], 
+        d['lag0'] + '->' + d['lag1']
+      ]
+      
+      attrList.forEach(attr => {
+        line.push(d[attr])
+      })
+      
+      return line.join('\t')
+    }).join('\n')
+    
+    text = [
+      'Lag 0',
+      'Lag 1',
+      'Lag 0->1',
+      '出現頻率',
+      '出現機率',
+      '期望個數',
+      '殘差',
+      '調整後殘差',
+      '相關係數'].join('\t') + '\n' + text
+    
+    copyPlainText(text)
+  })
   
   // --------------------------------
   

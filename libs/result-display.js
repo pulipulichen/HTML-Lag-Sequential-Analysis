@@ -5,6 +5,7 @@ var _x_var_count;
 var _y_var_count;
 
 var _draw_result_table = function () {
+    setSettingToPersisten()
     
     _ct_json = _get_ct_json_from_ui();
     //console.log(_ct_json);
@@ -93,7 +94,11 @@ var _draw_obs_seq_table = function () {
 var _draw_event_count_table = function () {
     
     var _cross_table = $('<div class="analyze-result cross-table events-descriptive-table" style="display:inline-block">'
-        + '<div class="caption" style="text-align:center;display:block">事件統計表</div>'
+        + `<div class="caption" style="text-align:center;display:block">
+            事件統計表
+            <button type="button" class="copy-table-freq">複製頻率排序</button>
+            <button type="button" class="copy-table-code">複製編碼排序</button>
+          </div>`
         + '<table border="1" cellpadding="0" cellspacing="0">'
         + '<thead>'
             + '<tr>'
@@ -145,12 +150,36 @@ var _draw_event_count_table = function () {
             + '</tr>').appendTo(_tbody);
     }
     
+    
+    _cross_table.find('.copy-table-freq').click(() => {
+      let data = [].concat(_data)
+      let text = data.map(d => [d.n, d.c].join('\t')).join('\n')
+      copyPlainText(text)
+    })
+    
+    _cross_table.find('.copy-table-code').click(() => {
+      let data = [].concat(_data)
+      data = data.sort((a, b) => {
+        //console.log([a.n, b.n])
+        if (a.n > b.n) {
+          return 1
+        }
+        else {
+          return -1
+        }
+      })
+      let text = data.map(d => [d.n, d.c].join('\t')).join('\n')
+      //console.log(text)
+      copyPlainText(text)
+    })
+
+    
     return _cross_table;
 };
 
 var _draw_cross_table = function () {
     var _cross_table = $('<div class="analyze-result cross-table event-transfer-table" style="display:inline-block">'
-        + '<div class="caption" style="text-align:center;display:block">事件轉移表</div>'
+        + `<div class="caption" style="text-align:center;display:block">事件轉移表</div>`
         + '<table border="1" cellpadding="0" cellspacing="0">'
         + '<thead>'
             + '<tr class="x-var-tr"><th colspan="3" rowspan="2"></th><th class="x-var-name"></th>'
@@ -869,44 +898,64 @@ var _draw_diagram = function (_result, _sig_seq) {
 let appendDiagramFlow = function (_seq_list) {
   
     let edges = seqListToEdges(_seq_list)
-    //console.log(edges)
-    let nodes = parseNodesFromEdges(edges)
-    let xml = buildDiagramXML(nodes, edges)
-    let diagramButtons = $(`<div class="ui fluid buttons">
-    <a class="ui button copy-button">Copy</a>
-    <a class="ui button download-button">Download</a>
-    <a class="ui button" href="https://app.diagrams.net/" target="_blank">diagrams.net</a>
-</div>`)
-  
-    diagramButtons.find('.download-button').click(() => {
-      let nodeString = ''
-      for (let i = 0; i < nodes.length; i++) {
-        if (nodeString !== '') {
-          nodeString = nodeString + ','
-        }
-        
-        let n = nodes[i].slice(0,3)
-        
-        nodeString = nodeString + n
-        if (nodeString.length > 10) {
-          break
-        }
+    let groupsEdges = analyzeGroupEdges(edges)
+    
+    let groupsKeys = Object.keys(groupsEdges)
+    groupsKeys.sort()
+    groupsKeys.forEach(group => {
+      let e = groupsEdges[group]
+      
+      let copyLabel = 'Copy'
+      if (group !== '_') {
+        copyLabel = 'Copy ' + group
       }
       
-      let filename = `LSA-${nodeString}-${(new Date().mmddhhmm())}.xml`
-      _download_file(xml, filename, "text/xml");
+      let downloadLabel = 'Download'
+      if (group !== '_') {
+        downloadLabel = 'Download ' + group
+      }
+      
+      //console.log(edges)
+      let nodes = parseNodesFromEdges(e)
+      let xml = buildDiagramXML(nodes, e)
+      let diagramButtons = $(`<div class="ui fluid buttons">
+      <a class="ui button copy-button">Copy ${copyLabel}</a>
+      <a class="ui button download-button">${downloadLabel}</a>
+      <a class="ui button" href="https://app.diagrams.net/" target="_blank">diagrams.net</a>
+  </div>`)
+
+      diagramButtons.find('.download-button').click(() => {
+        let nodeString = ''
+        for (let i = 0; i < nodes.length; i++) {
+          if (nodeString !== '') {
+            nodeString = nodeString + ','
+          }
+
+          let n = nodes[i].slice(0,3)
+
+          nodeString = nodeString + n
+          if (nodeString.length > 10) {
+            break
+          }
+        }
+
+        let filename
+        if (group !== '_') {
+          filename = `LSA-${group}-${nodeString}-${(new Date().mmddhhmm())}.xml`
+        }
+        else {
+          filename = `LSA-${nodeString}-${(new Date().mmddhhmm())}.xml`
+        }
+        _download_file(xml, filename, "text/xml");
+      })
+
+      diagramButtons.find('.copy-button').click(() => {
+        copyPlainText(xml)
+      })
+
+      $('#preview_html').append(`<textarea onfocus="this.select()">` + xml + `</textarea>`)
+      $('#preview_html').append(diagramButtons)
+      //drawPlainLagTable()
     })
-    
-    diagramButtons.find('.copy-button').click(() => {
-      const el = document.createElement('textarea');
-      el.value = xml
-      document.body.appendChild(el);
-      el.select();
-      document.execCommand('copy');
-      document.body.removeChild(el);
-    })
-    
-    $('#preview_html').append(`<textarea onfocus="this.select()">` + xml + `</textarea>`)
-    $('#preview_html').append(diagramButtons)
-    //drawPlainLagTable()
+      
 }
