@@ -106,7 +106,7 @@ let buildDiagramXML = function (nodes, edges) {
     
     let loop = ''
     if (source === target) {
-      loop = 'entryX=0.25;entryY=1;entryDx=0;entryDy=0;exitX=1;exitY=0.75;exitDx=0;exitDy=0;'
+      loop = 'entryX=0.75;entryY=1;entryDx=0;entryDy=0;exitX=1;exitY=0.75;exitDx=0;exitDy=0;'
     }
 
     root.append(`<mxCell id="A-Yyusrlcqo05p7WiQaU-line${i}" value="${label}" 
@@ -147,17 +147,18 @@ let buildNodePositions = function (nodes) {
 }
 
 
+let parseGroup = (node) => {
+  if (node.indexOf('-') === -1) {
+    return '_'
+  }
+  else {
+    return node.slice(0, node.indexOf('-'))
+  }
+}
+  
 let analyzeGroupEdges = function (edges) {
   let groupList = {}
   
-  let parseGroup = (node) => {
-    if (node.indexOf('-') === -1) {
-      return '_'
-    }
-    else {
-      return node.slice(0, node.indexOf('-'))
-    }
-  }
   
   let addToGroupList = (group, edge) => {
     if (Array.isArray(groupList[group]) === false) {
@@ -186,3 +187,353 @@ let analyzeGroupEdges = function (edges) {
 // -------------------------
 
 //document.getElementById('output').value = buildDiagramXML(nodes, edges)
+
+
+let appendDiagramFlow = function (_seq_list) {
+  
+    let edges = seqListToEdges(_seq_list)
+    let groupsEdges = analyzeGroupEdges(edges)
+    
+    let groupsKeys = Object.keys(groupsEdges)
+    groupsKeys.sort()
+    groupsKeys.forEach(group => {
+      let e = groupsEdges[group]
+      
+      if (group === 'AP') {
+        console.log(e)
+      }
+      
+      let copyLabel = 'Copy'
+      if (group !== '_') {
+        copyLabel = 'Copy ' + group
+      }
+      
+      let downloadLabel = 'Download'
+      if (group !== '_') {
+        downloadLabel = 'Download ' + group
+      }
+      
+      //console.log(edges)
+      let nodes = parseNodesFromEdges(e)
+      let xml = buildDiagramXML(nodes, e)
+      let diagramButtons = $(`<div class="ui fluid buttons">
+      <a class="ui button copy-button">${copyLabel}</a>
+      <a class="ui button download-button" group="${group}">${downloadLabel}</a>
+      <a class="ui button" href="https://app.diagrams.net/" target="_blank">diagrams.net</a>
+  </div>`)
+
+      diagramButtons.find('.download-button').click(function () {
+        let nodeString = []
+        
+        for (let i = 0; i < nodes.length; i++) {
+          /*
+          if (nodeString !== '') {
+            nodeString = nodeString + ','
+          }
+          */
+          let n = nodes[i]
+          if (n.indexOf('-') > -1) {
+            n = n.slice(n.indexOf('-') + 1)
+          }
+          n = n.slice(0,3)
+
+          nodeString.push(n)
+          if (nodeString.join(',').length > 10) {
+            break
+          }
+        }
+
+        nodeString = nodeString.join(',')
+        let filename
+        let paticipantName = $('#paticipant_code').val()
+        
+        if (group !== '_') {
+          filename = `LSA-${group}-${nodeString}-${paticipantName}-${(new Date().mmddhhmm())}.xml`
+        }
+        else {
+          filename = `LSA-${nodeString}-${paticipantName}-${(new Date().mmddhhmm())}.xml`
+        }
+        
+        
+        
+        _download_file(xml, filename, "text/xml");
+      })
+
+      diagramButtons.find('.copy-button').click(() => {
+        copyPlainText(xml)
+      })
+
+      let preview = $('#preview_html')
+      preview.append(buildDiagramTable(e, group))
+      preview.append(`<textarea onfocus="this.select()">` + xml + `</textarea>`)
+      preview.append(diagramButtons)
+      //drawPlainLagTable()
+    })
+      
+}
+
+let sortTwoStrings = function (str1, str2) {
+  if (str1 > str2) {
+    return 1
+  }
+  else {
+    return -1
+  }
+}
+
+let sortTwoStringsWithGroup = function (str1, str2, group) {
+  if (parseGroup(str1) === parseGroup(str2)) {
+      return sortTwoStrings(str1, str2)
+    }
+    else if (parseGroup(str1) === group) {
+      return -1
+    }
+    else if (parseGroup(str2) === group) {
+      return 1
+    }
+}
+
+let sortNodesByGroup = function (source, target, group) {
+  let nodes = []
+  
+  if (parseGroup(source) !== parseGroup(target)) {
+    if (parseGroup(source) === group) {
+      nodes = [source, target]
+    }
+    else if (parseGroup(target) === group) {
+      nodes = [target, source]
+    }
+    else {
+      nodes = [source, target]
+      nodes.sort()
+    }
+  }
+  else {
+    nodes = [source, target]
+    nodes.sort()
+  }
+  
+  return nodes
+}
+
+let buildDiagramTable = function (edge, group) {
+  edge = [].concat(edge)
+  
+  edge.sort((a, b) => {
+    let aNodes = sortNodesByGroup(a.source, a.target, group)
+    let bNodes = sortNodesByGroup(b.source, b.target, group)
+    
+    if (parseGroup(aNodes[0]) !== parseGroup(bNodes[0])) {
+      if (parseGroup(aNodes[0]) === group) {
+        return -1
+      }
+      else if (parseGroup(bNodes[0]) === group) {
+        return 1
+      }
+    }
+    else {
+      if (aNodes[0] === bNodes[0]) {
+        if (aNodes[0] === a.source && bNodes[0] === b.source) {
+          if (parseGroup(aNodes[1]) === group) {
+            return -1
+          }
+          else if (parseGroup(bNodes[1]) === group) {
+            return 1
+          }
+          else {
+            return sortTwoStrings(aNodes[1], bNodes[1])
+          }
+        }
+        else if (aNodes[0] === a.source) {
+          return -1
+        }
+        else if (bNodes[0] === b.source) {
+          return 1
+        }
+        return sortTwoStrings(aNodes[1], bNodes[1])
+      }
+      else {
+        return sortTwoStrings(aNodes[0], bNodes[0])
+      }
+    }
+    
+    /*
+    if (parseGroup(a.source) !== parseGroup(b.source)) {
+      if (parseGroup(a.source) === group) {
+        return -1
+      }
+      else {
+        return 1
+      }
+    }
+    else {
+      if (a.source === b.source) {
+        return sortTwoStrings(a.target, b.target)
+      }
+      else {
+        return sortTwoStrings(a.source, b.source)
+      }
+    }
+    */
+    
+    /*
+    if (a.source === a.target) {
+      if (b.source === b.target) {
+        return (sortTwoStrings(a.source, b.source))
+      }
+      return -1
+    }
+    else if (b.source === b.target) {
+      return 1
+    }
+    else if (parseGroup(a.source) === parseGroup(a.target) 
+            && parseGroup(b.source) === parseGroup(b.target)
+            && parseGroup(b.source) === parseGroup(a.source)) {
+      if (a.source === b.source) {
+        return sortTwoStrings(a.target, b.target)
+      }
+      return sortTwoStrings(a.source, b.source)
+    }
+    else if (parseGroup(a.source) === group) {
+      if (parseGroup(a.target) === group) {
+        if (parseGroup(b.source) === group 
+                && parseGroup(b.target) === group) {
+          if (a.source !== b.source) {
+            return sortTwoStrings(a.source, b.source)
+          }
+          else if (a.target !== b.target) {
+            return sortTwoStrings(a.target, b.target)
+          }
+        }
+        else if (parseGroup(b.source) === group
+                && a.source === b.source) {
+          return sortTwoStrings(a.target, b.target)
+        }
+        return -1
+      }
+      else if (parseGroup(b.source) === group) {
+        if (a.source === b.source) {
+          return sortTwoStringsWithGroup(a.target, b.target, group)
+        }
+        return sortTwoStringsWithGroup(a.source, b.source, group)
+      }
+      else if (parseGroup(b.source) === group 
+              && parseGroup(b.target) === group) {
+        return 1
+      }
+      return -1
+    }
+    else if (parseGroup(b.source) === group) {
+      return 1
+    }
+    else {
+      if (a.target > b.target) {
+        return 1
+      }
+      else if (a.target < b.target) {
+        return -1
+      }
+      else if (a.source > b.source) {
+        return 1
+      }
+      else if (a.source < b.source) {
+        return -1
+      }
+    }
+     */
+  })
+  
+  let paticipant = $('#paticipant_code').val()
+  
+  if (group !== '_') {
+    if (paticipant !== '') {
+      paticipant = paticipant + '-'
+    }
+    paticipant = paticipant + group
+  }
+  
+  paticipant = paticipant + `(${edge.length})`
+  
+  let table = $(`<table class="ui compact table">
+  <thead>
+    <tr>
+      <th>${paticipant}</th>
+      <th>source</th>
+      <th>target</th>
+      <th>label</th>
+    </tr>
+  </thead>
+  <tbody></tbody>
+</table>`)
+  
+  let tbody = table.find('tbody')
+  
+  let colorList = ['yellow', '#2ecc71']
+  
+  let lastCode
+  let colorIndex = 0
+  
+  let parseCode = function (node) {
+    if (node.indexOf('-') === -1) {
+      return node
+    }
+    return node.slice(node.indexOf("-") + 1)
+  }
+  
+  edge.forEach(({source, target, label}) => {
+    let edgeNodes = sortNodesByGroup(source, target, group)
+    let code = parseCode(edgeNodes[0])
+    
+    if (!lastCode) {
+      lastCode = code
+    }
+    else if (lastCode !== code) {
+      colorIndex++
+      lastCode = code
+    }
+    
+    let color = colorList[(colorIndex % colorList.length)]
+    
+    let checked = ''
+    if (source === target) {
+      checked = `checked="checked"`
+    }
+    
+    let tr = $(`<tr>
+      <td><div class="ui fitted slider checkbox">
+          <input type="checkbox" ${checked}> <label></label>
+        </div></td>
+      <td class="source">${source}</td>
+      <td class="target">${target}</td>
+      <td class="label">${label}</td>
+    </tr>`)
+    
+    //console.log(parseGroup(source), parseGroup(target))
+    if (source === target) {
+      tr.find('.source,.target').css('color', 'red')
+    }
+    
+    if (parseGroup(source) === group) {
+      //tr.find('.source').addClass('positive')
+      if (parseCode(source) === lastCode) {
+        tr.find('.source').css('background-color', color)
+      }
+      else {
+        tr.find('.source').css('color', 'red')
+      }
+    }
+    if (parseGroup(target) === group) {
+      
+      if (parseCode(target) === lastCode) {
+        tr.find('.target').css('background-color', color)
+      }
+      else {
+        tr.find('.target').css('color', 'red')
+      }
+    }
+    
+    tbody.append(tr)
+  })
+  
+  return table
+}

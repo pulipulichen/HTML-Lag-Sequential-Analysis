@@ -323,7 +323,7 @@ var _draw_cross_table = function () {
 var _draw_cross_table_note = function () {
     var _note = $('<ol type="a">'
         + '<li>調整後殘差是用Allison & Liker (1982)的z分數計算公式，超過1.96即達0.05顯著水準，表示此序列次數顯著較多。</li>'
-        + '<li class="q">相關係數是用Yule\'Q的計算公式，介於-1至1之間。大於0為正相關，小於0為複相關。絕對值1為完全相關、0.7~0.9為高度相關、0.4~0.6為中度相關、0.1~0.3為低度相關、0.1以下為無相關。</li>'
+        + '<li class="q">相關係數是用Yule\'Q的計算公式，介於-1至1之間。大於0為正相關，小於0為複相關。絕對值1為完全相關、0.7~0.9為高度相關、0.3~0.7為中度相關、0.1~0.3為低度相關、0.1以下為無相關。</li>'
         + '</ol>');
 
     if ($("#input_table_display_details:checked").length === 0) {
@@ -894,68 +894,3 @@ var _draw_diagram = function (_result, _sig_seq) {
     _init_state_machine("js_plumb_canvas", _seq_list);
     appendDiagramFlow(_seq_list)
 }; 
-
-let appendDiagramFlow = function (_seq_list) {
-  
-    let edges = seqListToEdges(_seq_list)
-    let groupsEdges = analyzeGroupEdges(edges)
-    
-    let groupsKeys = Object.keys(groupsEdges)
-    groupsKeys.sort()
-    groupsKeys.forEach(group => {
-      let e = groupsEdges[group]
-      
-      let copyLabel = 'Copy'
-      if (group !== '_') {
-        copyLabel = 'Copy ' + group
-      }
-      
-      let downloadLabel = 'Download'
-      if (group !== '_') {
-        downloadLabel = 'Download ' + group
-      }
-      
-      //console.log(edges)
-      let nodes = parseNodesFromEdges(e)
-      let xml = buildDiagramXML(nodes, e)
-      let diagramButtons = $(`<div class="ui fluid buttons">
-      <a class="ui button copy-button">Copy ${copyLabel}</a>
-      <a class="ui button download-button">${downloadLabel}</a>
-      <a class="ui button" href="https://app.diagrams.net/" target="_blank">diagrams.net</a>
-  </div>`)
-
-      diagramButtons.find('.download-button').click(() => {
-        let nodeString = ''
-        for (let i = 0; i < nodes.length; i++) {
-          if (nodeString !== '') {
-            nodeString = nodeString + ','
-          }
-
-          let n = nodes[i].slice(0,3)
-
-          nodeString = nodeString + n
-          if (nodeString.length > 10) {
-            break
-          }
-        }
-
-        let filename
-        if (group !== '_') {
-          filename = `LSA-${group}-${nodeString}-${(new Date().mmddhhmm())}.xml`
-        }
-        else {
-          filename = `LSA-${nodeString}-${(new Date().mmddhhmm())}.xml`
-        }
-        _download_file(xml, filename, "text/xml");
-      })
-
-      diagramButtons.find('.copy-button').click(() => {
-        copyPlainText(xml)
-      })
-
-      $('#preview_html').append(`<textarea onfocus="this.select()">` + xml + `</textarea>`)
-      $('#preview_html').append(diagramButtons)
-      //drawPlainLagTable()
-    })
-      
-}
